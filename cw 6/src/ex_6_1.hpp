@@ -21,6 +21,11 @@ namespace texture {
 	GLuint clouds;
 	GLuint moon;
 	GLuint ship;
+	GLuint planetTwo;
+	GLuint planet;
+	GLuint sun;
+	GLuint scratches;
+	GLuint rust;
 
 	GLuint grid;
 
@@ -33,6 +38,9 @@ namespace texture {
 GLuint program;
 GLuint programSun;
 GLuint programTex;
+GLuint programEarth;
+GLuint programShip;
+GLuint programProcTex;
 Core::Shader_Loader shaderLoader;
 
 Core::RenderContext shipContext;
@@ -140,6 +148,18 @@ void drawObjectColor(Core::RenderContext& context, glm::mat4 modelMatrix, glm::v
 
 }
 
+void drawObject(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec3 color, glm::vec3 colorTwo, GLuint program) {
+
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
+	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+	glUniform3f(glGetUniformLocation(program, "color"), color.x, color.y, color.z);
+	glUniform3f(glGetUniformLocation(program, "color"), colorTwo.x, colorTwo.y, colorTwo.z);
+
+	Core::DrawContext(context);
+
+}
+
 void drawObjectTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint program) {
 
 	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
@@ -154,6 +174,45 @@ void drawObjectTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLui
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
 	glUniform3f(glGetUniformLocation(program, "camerPos"), cameraPos.x, cameraPos.y, cameraPos.z);
 	Core::SetActiveTexture(texture, "colorTexture", program, 0);
+	Core::DrawContext(context);
+
+}
+
+void drawWithTwoTextures(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint textureTwo, GLuint program) {
+
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
+	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+	glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
+	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform1f(glGetUniformLocation(program, "E"), E);
+	glUniform3f(glGetUniformLocation(program, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+	glUniform3f(glGetUniformLocation(program, "spotPos"), spaceshipPos.x, spaceshipPos.y, spaceshipPos.z);
+	glUniform3f(glGetUniformLocation(program, "spotDir"), spaceshipDir.x, spaceshipDir.y, spaceshipDir.z);
+	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniform3f(glGetUniformLocation(program, "camerPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+	Core::SetActiveTexture(texture, "colorTexture", program, 0);
+	Core::SetActiveTexture(textureTwo, "clouds", program, 2);
+	Core::DrawContext(context);
+
+}
+
+void drawShip(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint textureTwo, GLuint textureThree, GLuint program) {
+
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
+	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+	glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
+	glUniform3f(glGetUniformLocation(program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform1f(glGetUniformLocation(program, "E"), E);
+	glUniform3f(glGetUniformLocation(program, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+	glUniform3f(glGetUniformLocation(program, "spotPos"), spaceshipPos.x, spaceshipPos.y, spaceshipPos.z);
+	glUniform3f(glGetUniformLocation(program, "spotDir"), spaceshipDir.x, spaceshipDir.y, spaceshipDir.z);
+	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniform3f(glGetUniformLocation(program, "camerPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+	Core::SetActiveTexture(texture, "colorTexture", program, 0);
+	Core::SetActiveTexture(textureTwo, "rust", program, 2);
+	Core::SetActiveTexture(textureTwo, "scratches", program, 3);
 	Core::DrawContext(context);
 
 }
@@ -197,22 +256,25 @@ void renderScene(GLFWwindow* window)
 
 	glUseProgram(programSun);
 
-	drawObjectColor(sphereContext, glm::mat4(), glm::vec3(1.f, 1.f, 0.f), programSun);
+	drawObjectTexture(sphereContext, glm::mat4(), texture::sun, programSun);
 
-	glUseProgram(program);
+	glUseProgram(programEarth);
 
-	drawObjectColor(sphereContext, glm::translate(glm::vec3(1.5 * cos(2 * time), 0, 1.5 * sin(2 * time))) * glm::scale(glm::vec3(0.2f, 0.2f, 0.2f)), glm::vec3(0.3f, 0.2f, 0.1f), program);
-
+	drawWithTwoTextures(sphereContext, glm::translate(glm::vec3(3 * cos(time), 0, 3 * sin(time))) * glm::scale(glm::vec3(0.5f, 0.5f, 0.5f)), texture::earth, texture::clouds, programEarth); //ziemia
 	glUseProgram(programTex);
-	drawObjectTexture(sphereContext, glm::translate(glm::vec3(3 * cos(time), 0, 3 * sin(time))) * glm::scale(glm::vec3(0.5f, 0.5f, 0.5f)), texture::earth, programTex); //ziemia
-	drawObjectTexture(sphereContext, glm::translate(glm::vec3(3 * cos(time), 0, 3 * sin(time))) * glm::translate(glm::vec3(cos(-time), 0, sin(-time))) * glm::scale(glm::vec3(0.2f, 0.2f, 0.2f)), texture::grid, programTex); //księżyc
+
+	drawObjectTexture(sphereContext, glm::translate(glm::vec3(1.5 * cos(2 * time), 0, 1.5 * sin(2 * time))) * glm::scale(glm::vec3(0.2f, 0.2f, 0.2f)), texture::moon, programTex);
+
+	drawObjectTexture(sphereContext, glm::translate(glm::vec3(3 * cos(time), 0, 3 * sin(time))) * glm::translate(glm::vec3(cos(-time), 0, sin(-time))) * glm::scale(glm::vec3(0.2f, 0.2f, 0.2f)), texture::moon, programTex); //księżyc
+	drawObjectTexture(sphereContext, glm::translate(glm::vec3(6 * cos(time / 2), 0, 6 * sin(time / 2))) * glm::scale(glm::vec3(0.7f, 0.7f, 0.7f)), texture::planet, programTex);
+
+	drawObjectTexture(sphereContext, glm::translate(glm::vec3(9 * cos(time / 3), 0, 9 * sin(time / 3))), texture::planetTwo, programTex);
+
+	glUseProgram(programProcTex);
+
+	drawObject(sphereContext, glm::translate(glm::vec3(12 * cos(time / 4), 0, 12 * sin(time / 4))) * glm::scale(glm::vec3(1.2f, 1.2f, 1.2f)), custom_color, custom_color2, programProcTex);
+
 	glUseProgram(program);
-	drawObjectColor(sphereContext, glm::translate(glm::vec3(6 * cos(time / 2), 0, 6 * sin(time / 2))) * glm::scale(glm::vec3(0.7f, 0.7f, 0.7f)), glm::vec3(0.5f, 0.5f, 0.5f), program);
-
-	drawObjectColor(sphereContext, glm::translate(glm::vec3(9 * cos(time / 3), 0, 9 * sin(time / 3))), glm::vec3(0.4f, 0.5f, 0.8f), program);
-
-	drawObjectColor(sphereContext, glm::translate(glm::vec3(12 * cos(time / 4), 0, 12 * sin(time / 4))) * glm::scale(glm::vec3(1.2f, 1.2f, 1.2f)), glm::vec3(0.7f, 0.2f, 0.3f), program);
-
 
 	createAsteroidBelt(time);
 
@@ -224,11 +286,14 @@ void renderScene(GLFWwindow* window)
 		-spaceshipDir.x,-spaceshipDir.y,-spaceshipDir.z,0,
 		0.,0.,0.,1.,
 		});
+	glUseProgram(programShip);
 
-	drawObjectColor(shipContext,
+	drawShip(shipContext,
 		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()) * glm::scale(glm::vec3(0.2f)),
-		glm::vec3(0.3, 0.3, 0.5), program
+		texture::ship, texture::rust, texture::scratches, programShip
 	);
+
+
 
 	glUseProgram(0);
 	glfwSwapBuffers(window);
@@ -260,6 +325,9 @@ void init(GLFWwindow* window)
 	program = shaderLoader.CreateProgram("shaders/shader_5_1.vert", "shaders/shader_5_1.frag");
 	programSun = shaderLoader.CreateProgram("shaders/shader_5_sun.vert", "shaders/shader_5_sun.frag");
 	programTex = shaderLoader.CreateProgram("shaders/shader_5_1_tex.vert", "shaders/shader_5_1_tex.frag");
+	programEarth = shaderLoader.CreateProgram("shaders/shader_5_1_earth.vert", "shaders/shader_5_1_earth.frag");
+	programShip = shaderLoader.CreateProgram("shaders/shader_5_1_ship.vert", "shaders/shader_5_1_ship.frag");
+	programProcTex = shaderLoader.CreateProgram("shaders/shader_proc_tex.vert", "shaders/shader_proc_tex.frag");
 
 	loadModelToContext("./models/sphere.obj", sphereContext);
 	loadModelToContext("./models/spaceship.obj", shipContext);
@@ -267,7 +335,13 @@ void init(GLFWwindow* window)
 
 	texture::earth = Core::LoadTexture("./textures/earth.png");
 	texture::grid = Core::LoadTexture("./textures/grid.png");
-	texture::moon = Core::LoadTexture("./textures/moon.png");
+	texture::moon = Core::LoadTexture("./textures/test.png");
+	texture::planet = Core::LoadTexture("./textures/rust.jpg");
+	texture::planetTwo = Core::LoadTexture("./textures/jupiter.jpg");
+	texture::sun = Core::LoadTexture("./textures/sun.png");
+	texture::clouds = Core::LoadTexture("./textures/clouds.jpg");
+	texture::rust = Core::LoadTexture("./textures/rust.jpg");
+	texture::scratches = Core::LoadTexture("./textures/scratches.jpg");
 }
 
 void shutdown(GLFWwindow* window)
