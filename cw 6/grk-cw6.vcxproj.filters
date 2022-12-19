@@ -91,10 +91,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\shader_5_1_tex.vert">
+    <None Include="shaders\shader_5_1_tex_backup.vert">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="shaders\shader_5_1_tex.frag">
+    <None Include="shaders\shader_5_1_tex_backup.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="shaders\shader_5_sun.vert">
@@ -125,6 +125,18 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="shaders\shader_proc_tex.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\shader_5_1_tex.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\shader_5_1_tex.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\shader_skybox.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\shader_skybox.frag">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

@@ -8,7 +8,7 @@ in vec4 modelPositionMatrix;
 
 void main()
 {
-	if( sin(modelPositionMatrix.y) > 0 )
+	if( sin(8*modelPositionMatrix.x) > 0 )
 	{
 		outColor = vec4(color, 1.0);
 	}

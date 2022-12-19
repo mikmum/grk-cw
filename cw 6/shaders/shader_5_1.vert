@@ -17,6 +17,4 @@ void main()
 	outVertexNormal = vertexNormal;
 	modelNormalMatrix = modelMatrix * vec4(vertexNormal, 0.0);
 	modelPositionMatrix = modelMatrix * vec4(vertexPosition, 1.0);
-
-
 }
