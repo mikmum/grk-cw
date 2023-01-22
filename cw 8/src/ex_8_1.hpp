@@ -129,7 +129,13 @@ void renderScene(GLFWwindow* window)
 
 
 	glUseProgram(program);
-	drawObjectColor(sphereContext, glm::mat4(), glm::vec3(0.95, 0.1, 0.1));
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			drawObjectColor(sphereContext, glm::mat4() * glm::scale(glm::vec3(0.5,0.5,0.5)) * glm::translate(glm::vec3(0.95 + i * 2.0, 0.1 + j * 2.0, 0.1)), glm::vec3(0.95, 0.1, 0.1));
+		}
+	}
 
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
