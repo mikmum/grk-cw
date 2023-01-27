@@ -8,9 +8,11 @@ layout(location = 4) in vec3 vertexBitangent;
 
 uniform mat4 transformation;
 uniform mat4 modelMatrix;
+uniform mat4 viewProjectionMatrix;
 
 out vec3 vecNormal;
 out vec3 worldPos;
+out vec4 sunSpacePos;
 
 uniform vec3 lightPos;
 uniform vec3 spotlightPos;
@@ -40,4 +42,5 @@ void main()
 	spotlightDirTS = TBN*SL;
 	sunDirTS = TBN*sunDir;
 
+	sunSpacePos=viewProjectionMatrix*modelMatrix*vec4(vertexPosition,1);
 }
