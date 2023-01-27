@@ -60,6 +60,7 @@ namespace models {
 	Core::RenderContext ballContext;
 	Core::RenderContext pillowContext;
 	Core::RenderContext pillowTwoContext;
+	Core::RenderContext switchContext;
 }
 
 GLuint depthMapFBO;
@@ -96,7 +97,7 @@ float exposition = 1.f;
 glm::mat4 lightVP;
 
 glm::vec3 pointlightPos = glm::vec3(0, 2, 0);
-glm::vec3 pointlightColor = glm::vec3(0.9, 0.6, 0.6);
+glm::vec3 pointlightColor = glm::vec3(0.9, 0.6, 0.6)*8;
 
 glm::vec3 spotlightPos = glm::vec3(0, 0, 0);
 glm::vec3 spotlightConeDir = glm::vec3(0, 0, 0);
@@ -332,6 +333,15 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, 0.1f, 0.0f);
 
+	if (lightSwitch)
+	{
+		drawObjectPBR(models::switchContext, glm::eulerAngleY(-3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, 0.5f, 1.0f);
+	}
+	else
+	{
+		drawObjectPBR(models::switchContext, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f/2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, 0.5f, 1.0f);
+	}
+
 	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
@@ -438,6 +448,7 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/obiekty/ball/ball.obj", models::ballContext);
 	loadModelToContext("./models/obiekty/pillow/pillow.obj", models::pillowContext);
 	loadModelToContext("./models/obiekty/pillow/pillowTwo.obj", models::pillowTwoContext);
+	loadModelToContext("./models/obiekty/switch/switch.obj", models::switchContext);
 
 	loadModelToContext("./models/sphere.obj", sphereContext);
 	loadModelToContext("./models/spaceship.obj", shipContext);
