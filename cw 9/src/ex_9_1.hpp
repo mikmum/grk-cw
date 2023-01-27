@@ -58,6 +58,8 @@ namespace models {
 	Core::RenderContext wardrobeContext;
 	Core::RenderContext potContext;
 	Core::RenderContext ballContext;
+	Core::RenderContext pillowContext;
+	Core::RenderContext pillowTwoContext;
 }
 
 GLuint depthMapFBO;
@@ -218,7 +220,7 @@ void renderScene(GLFWwindow* window)
 	//space lamp
 	glUseProgram(programSun);
 	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
-	glm::mat4 transformation = viewProjectionMatrix * glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1));
+	glm::mat4 transformation = viewProjectionMatrix * glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::translate(glm::vec3(0.f, -5.f, 0));
 	glUniformMatrix4fv(glGetUniformLocation(programSun, "transformation"), 1, GL_FALSE, (float*)&transformation);
 	glUniform3f(glGetUniformLocation(programSun, "color"), sunColor.x / 2, sunColor.y / 2, sunColor.z / 2);
 	glUniform1f(glGetUniformLocation(programSun, "exposition"), exposition);
@@ -226,10 +228,10 @@ void renderScene(GLFWwindow* window)
 
 	glUseProgram(program);
 
-	drawObjectPBR(sphereContext, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, 0, 0)) * glm::scale(glm::vec3(0.3f)), glm::vec3(0.2, 0.7, 0.3), 0.3, 0.0);
+	drawObjectPBR(sphereContext, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)), glm::vec3(0.2, 0.7, 0.3), 0.3, 0.0);
 
 	drawObjectPBR(sphereContext,
-		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, 0, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)),
+		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)),
 		glm::vec3(0.5, 0.5, 0.5), 0.7, 0.0);
 
 	drawObjectPBR(models::bedContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), 0.2f, 0.0f);
@@ -241,6 +243,8 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), 0.2f, 0.0f);
 	drawObjectPBR(models::marbleBustContext, glm::mat4(), glm::vec3(1.f, 1.f, 1.f), 0.5f, 1.0f);
 	drawObjectPBR(models::materaceContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), 0.8f, 0.0f);
+	drawObjectPBR(models::pillowContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), 0.8f, 0.0f);
+	drawObjectPBR(models::pillowTwoContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), 0.8f, 0.0f);
 	drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), 0.1f, 0.0f);
 	drawObjectPBR(models::planeContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), 0.2f, 0.0f);
 	drawObjectPBR(models::roomContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), 0.8f, 0.0f);
@@ -354,12 +358,14 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/obiekty/wardrobe/wardrobe.obj", models::wardrobeContext);
 	loadModelToContext("./models/obiekty/pot/pot.obj", models::potContext);
 	loadModelToContext("./models/obiekty/ball/ball.obj", models::ballContext);
+	loadModelToContext("./models/obiekty/pillow/pillow.obj", models::pillowContext);
+	loadModelToContext("./models/obiekty/pillow/pillowTwo.obj", models::pillowTwoContext);
 
 	loadModelToContext("./models/sphere.obj", sphereContext);
 	loadModelToContext("./models/spaceship.obj", shipContext);
 	//loadModelToContext("./models/drawer.obj", models::drawerContext);
 	loadModelToContext("./models/marbleBust.obj", models::marbleBustContext);
-	//loadModelToContext("./models/materace.obj", models::materaceContext);
+	loadModelToContext("./models/materace.obj", models::materaceContext);
 	//loadModelToContext("./models/pencils.obj", models::pencilsContext);
 	loadModelToContext("./models/spaceship.obj", models::spaceshipContext);
 	loadModelToContext("./models/sphere.obj", models::sphereContext);
