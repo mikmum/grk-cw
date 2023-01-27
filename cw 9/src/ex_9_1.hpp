@@ -103,6 +103,8 @@ glm::vec3 spotlightConeDir = glm::vec3(0, 0, 0);
 glm::vec3 spotlightColor = glm::vec3(0.4, 0.4, 0.9)*3;
 float spotlightPhi = 3.14 / 4;
 
+bool lightSwitch = true;
+
 float ballMove = 0.1f;
 
 
@@ -201,7 +203,15 @@ void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec
 	glUniform3f(glGetUniformLocation(program, "sunColor"), sunColor.x, sunColor.y, sunColor.z);
 
 	glUniform3f(glGetUniformLocation(program, "lightPos"), pointlightPos.x, pointlightPos.y, pointlightPos.z);
-	glUniform3f(glGetUniformLocation(program, "lightColor"), pointlightColor.x, pointlightColor.y, pointlightColor.z);
+
+	if (lightSwitch)
+	{
+		glUniform3f(glGetUniformLocation(program, "lightColor"), pointlightColor.x, pointlightColor.y, pointlightColor.z);
+	}
+	else
+	{
+		glUniform3f(glGetUniformLocation(program, "lightColor"), 0.f, 0.f, 0.f);
+	}
 
 	glUniform3f(glGetUniformLocation(program, "spotlightConeDir"), spotlightConeDir.x, spotlightConeDir.y, spotlightConeDir.z);
 	glUniform3f(glGetUniformLocation(program, "spotlightPos"), spotlightPos.x, spotlightPos.y, spotlightPos.z);
@@ -283,7 +293,14 @@ void renderScene(GLFWwindow* window)
 	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
 	glm::mat4 transformation = viewProjectionMatrix * glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::translate(glm::vec3(0.f, -5.f, 0));
 	glUniformMatrix4fv(glGetUniformLocation(programSun, "transformation"), 1, GL_FALSE, (float*)&transformation);
-	glUniform3f(glGetUniformLocation(programSun, "color"), sunColor.x / 2, sunColor.y / 2, sunColor.z / 2);
+	if (lightSwitch)
+	{
+		glUniform3f(glGetUniformLocation(programSun, "color"), sunColor.x / 2, sunColor.y / 2, sunColor.z / 2);
+	}
+	else
+	{
+		glUniform3f(glGetUniformLocation(programSun, "color"), sunColor.x / 20, sunColor.y / 20, sunColor.z / 20);
+	}
 	glUniform1f(glGetUniformLocation(programSun, "exposition"), exposition);
 	Core::DrawContext(sphereContext);
 
@@ -315,8 +332,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, 0.1f, 0.0f);
 
-	drawObjectPBR(models::ballContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
-	//glm::translate(glm::vec3(0.f,0.f,ballMove))
+	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
 	glm::mat4 specshipCameraRotrationMatrix = glm::mat4({
@@ -474,14 +490,16 @@ void processInput(GLFWwindow* window)
 		ballMove = ballMove + 0.05;
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS && ballMove > -7.f)
 		ballMove = ballMove - 0.05;
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		lightSwitch = !lightSwitch;
 
 	cameraPos = spaceshipPos - 0.5 * spaceshipDir + glm::vec3(0, 1, 0) * 0.2f;
 	cameraDir = spaceshipDir;
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-		exposition -= 0.05;
+		exposition -= 0.025;
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-		exposition += 0.05;
+		exposition += 0.025;
 
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
 		printf("spaceshipPos = glm::vec3(%ff, %ff, %ff);\n", spaceshipPos.x, spaceshipPos.y, spaceshipPos.z);
