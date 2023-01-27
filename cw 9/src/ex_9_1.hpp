@@ -70,6 +70,7 @@ GLuint programSun;
 GLuint programTest;
 GLuint programTex;
 GLuint programSkybox;
+GLuint programDepth;
 
 Core::Shader_Loader shaderLoader;
 
@@ -91,6 +92,8 @@ GLuint VAO,VBO;
 float aspectRatio = 1.f;
 
 float exposition = 1.f;
+
+glm::mat4 lightVP;
 
 glm::vec3 pointlightPos = glm::vec3(0, 2, 0);
 glm::vec3 pointlightColor = glm::vec3(0.9, 0.6, 0.6);
@@ -114,6 +117,27 @@ void updateDeltaTime(float time) {
 	deltaTime = time - lastTime;
 	if (deltaTime > 0.1) deltaTime = 0.1;
 	lastTime = time;
+}
+
+void initDepthMap()
+{
+	glGenFramebuffers(1, &depthMapFBO);
+
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 glm::mat4 createCameraMatrix()
 {
@@ -193,15 +217,47 @@ void drawSkyBox(Core::RenderContext& context, glm::mat4 modelMatrix) {
 	glEnable(GL_DEPTH_TEST);
 }
 
+void drawObjectDepth(Core::RenderContext& context, glm::mat4 viewProjection, glm::mat4 modelMatrix)
+{
+	glUniformMatrix4fv(glGetUniformLocation(programDepth, "viewProjectionMatrix"), 1, GL_FALSE, (float*)&viewProjection);
+	glUniformMatrix4fv(glGetUniformLocation(programDepth, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	Core::DrawContext(context);
+
+}
+
 void renderShadowapSun() {
 	float time = glfwGetTime();
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	//uzupelnij o renderowanie glebokosci do tekstury
+	//uzupelnij o renderowanie glebokosci do teksturys
+	//ustawianie przestrzeni rysowania 
+	//bindowanie FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	//czyszczenie mapy głębokości 
+	glClear(GL_DEPTH_BUFFER_BIT);
+	//ustawianie programu
+	glUseProgram(programDepth);
+	lightVP = glm::ortho(-5.5f, 4.f, -3.f, 3.f, 1.0f, 15.0f) * glm::lookAt(sunPos, sunPos - sunDir, glm::vec3(0, 1, 0));
 
-
-
-
-
+	drawObjectDepth(models::bedContext, lightVP, glm::mat4());
+	drawObjectDepth(models::chairContext, lightVP, glm::mat4());
+	drawObjectDepth(models::chairTwoContext, lightVP, glm::mat4());
+	drawObjectDepth(models::chairThreeContext, lightVP, glm::mat4());
+	drawObjectDepth(models::deskContext, lightVP, glm::mat4());
+	drawObjectDepth(models::doorContext, lightVP, glm::mat4());
+	drawObjectDepth(models::drawerContext, lightVP, glm::mat4());
+	drawObjectDepth(models::marbleBustContext, lightVP, glm::mat4());
+	drawObjectDepth(models::materaceContext, lightVP, glm::mat4());
+	drawObjectDepth(models::pillowContext, lightVP, glm::mat4());
+	drawObjectDepth(models::pillowTwoContext, lightVP, glm::mat4());
+	drawObjectDepth(models::pencilsContext, lightVP, glm::mat4());
+	drawObjectDepth(models::planeContext, lightVP, glm::mat4());
+	drawObjectDepth(models::roomContext, lightVP, glm::mat4());
+	drawObjectDepth(models::windowContext, lightVP, glm::mat4());
+	drawObjectDepth(models::window2Context, lightVP, glm::mat4());
+	drawObjectDepth(models::tableContext, lightVP,glm::mat4());
+	drawObjectDepth(models::wardrobeContext, lightVP, glm::mat4());
+	drawObjectDepth(models::potContext, lightVP, glm::mat4());
+	drawObjectDepth(models::ballContext, lightVP, glm::mat4());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -249,7 +305,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::planeContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), 0.2f, 0.0f);
 	drawObjectPBR(models::roomContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), 0.8f, 0.0f);
 	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), 0.2f, 0.0f);
-	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), 0.2f, 0.0f); //TODO fix
+	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), 0.2f, 0.0f);
 	drawObjectPBR(models::tableContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), 0.2f, 0.0f);
 	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), 0.2f, 0.0f);
 	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), 0.1f, 0.0f);
@@ -281,11 +337,11 @@ void renderScene(GLFWwindow* window)
 
 
 	//test depth buffer
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glUseProgram(programTest);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, depthMap);
-	//Core::DrawContext(models::testContext);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(programTest);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	Core::DrawContext(models::testContext);
 
 	glUseProgram(0);
 	glfwSwapBuffers(window);
@@ -342,7 +398,7 @@ void init(GLFWwindow* window)
 	programTest = shaderLoader.CreateProgram("shaders/test.vert", "shaders/test.frag");
 	programSun = shaderLoader.CreateProgram("shaders/shader_8_sun.vert", "shaders/shader_8_sun.frag");
 	programSkybox = shaderLoader.CreateProgram("shaders/shader_skybox.vert", "shaders/shader_skybox.frag");
-
+	programDepth = shaderLoader.CreateProgram("shaders/shader_shadow.vert", "shaders/shader_shadow.frag");
 
 	loadModelToContext("./models/obiekty/bed/bed.obj", models::bedContext);
 	loadModelToContext("./models/obiekty/chair/chair.obj", models::chairContext);
@@ -369,9 +425,11 @@ void init(GLFWwindow* window)
 	//loadModelToContext("./models/pencils.obj", models::pencilsContext);
 	loadModelToContext("./models/spaceship.obj", models::spaceshipContext);
 	loadModelToContext("./models/sphere.obj", models::sphereContext);
-	//loadModelToContext("./models/test.obj", models::testContext);
+	loadModelToContext("./models/test.obj", models::testContext);
 	loadModelToContext("./models/cube.obj", models::cubeContext);
 	loadCubemap(faces);
+
+	initDepthMap();
 }
 
 void shutdown(GLFWwindow* window)
