@@ -1,0 +1,13 @@
+# Blender MTL File: 'untitled.blend'
+# Material Count: 1
+
+newmtl _10217_Bed_Pillow_v1_max201010217_Bed_Pillow_v1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\mikmum\\Downloads\\modelsExported\\pillow\\10217_Bed_Pillow_v1_Difuse.jpg
