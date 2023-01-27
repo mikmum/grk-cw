@@ -103,7 +103,7 @@ glm::vec3 spotlightConeDir = glm::vec3(0, 0, 0);
 glm::vec3 spotlightColor = glm::vec3(0.4, 0.4, 0.9)*3;
 float spotlightPhi = 3.14 / 4;
 
-float ballMove = 1.f;
+float ballMove = 0.1f;
 
 
 float lastTime = -1.f;
@@ -314,8 +314,9 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::tableContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, 0.1f, 0.0f);
-	drawObjectPBR(models::ballContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
 
+	drawObjectPBR(models::ballContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
+	//glm::translate(glm::vec3(0.f,0.f,ballMove))
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
 	glm::mat4 specshipCameraRotrationMatrix = glm::mat4({
@@ -469,9 +470,9 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		spaceshipDir = glm::vec3(glm::eulerAngleY(-angleSpeed) * glm::vec4(spaceshipDir, 0));
 
-	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS && ballMove < 0.01f)
 		ballMove = ballMove + 0.05;
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS && ballMove > -7.f)
 		ballMove = ballMove - 0.05;
 
 	cameraPos = spaceshipPos - 0.5 * spaceshipDir + glm::vec3(0, 1, 0) * 0.2f;
