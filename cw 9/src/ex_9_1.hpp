@@ -103,6 +103,7 @@ glm::vec3 spotlightConeDir = glm::vec3(0, 0, 0);
 glm::vec3 spotlightColor = glm::vec3(0.4, 0.4, 0.9)*3;
 float spotlightPhi = 3.14 / 4;
 
+float ballMove = 1.f;
 
 
 float lastTime = -1.f;
