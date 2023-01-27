@@ -468,6 +468,11 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		spaceshipDir = glm::vec3(glm::eulerAngleY(-angleSpeed) * glm::vec4(spaceshipDir, 0));
 
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+		ballMove = ballMove + 0.05;
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+		ballMove = ballMove - 0.05;
+
 	cameraPos = spaceshipPos - 0.5 * spaceshipDir + glm::vec3(0, 1, 0) * 0.2f;
 	cameraDir = spaceshipDir;
 
