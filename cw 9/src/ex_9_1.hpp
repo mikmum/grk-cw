@@ -100,6 +100,8 @@ float exposition = 1.f;
 glm::mat4 lightVP;
 glm::mat4 spotlightVP;
 
+glm::mat4 specshipCameraRotrationMatrix;
+
 glm::vec3 pointlightPos = glm::vec3(0, 2, 0);
 glm::vec3 pointlightColor = glm::vec3(0.9, 0.6, 0.6)*8;
 
@@ -284,6 +286,12 @@ void renderShadowapSun() {
 	glUseProgram(programDepth);
 	lightVP = glm::ortho(-5.5f, 4.f, -3.f, 3.f, 1.0f, 15.0f) * glm::lookAt(sunPos, sunPos - sunDir, glm::vec3(0, 1, 0));
 
+	drawObjectDepth(sphereContext, lightVP, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)));
+
+	drawObjectDepth(sphereContext, lightVP,
+		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)));
+
+
 	drawObjectDepth(models::bedContext, lightVP, glm::mat4());
 	drawObjectDepth(models::chairContext, lightVP, glm::mat4());
 	drawObjectDepth(models::chairTwoContext, lightVP, glm::mat4());
@@ -303,7 +311,22 @@ void renderShadowapSun() {
 	drawObjectDepth(models::tableContext, lightVP,glm::mat4());
 	drawObjectDepth(models::wardrobeContext, lightVP, glm::mat4());
 	drawObjectDepth(models::potContext, lightVP, glm::mat4());
-	drawObjectDepth(models::ballContext, lightVP, glm::mat4());
+
+
+	drawObjectDepth(models::ballContext, lightVP, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f));
+
+
+	if (lightSwitch)
+	{
+		drawObjectDepth(models::switchContext, lightVP, glm::eulerAngleY(-3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)));
+	}
+	else
+	{
+		drawObjectDepth(models::switchContext, lightVP, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)));
+	}
+
+	//drawObjectDepth(shipContext, lightVP, glm::translate(spaceshipPos) * specshipCameraRotrationMatrix);
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -321,6 +344,11 @@ void renderShadowapSpotlight() {
 	//ustawianie programu
 	glUseProgram(programDepth);
 	spotlightVP = createPerspectiveMatrix(0.5f) * glm::lookAt(spotlightPos, spotlightPos + spotlightConeDir, glm::vec3(0, 1, 0));
+
+	drawObjectDepth(sphereContext, spotlightVP, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)));
+
+	drawObjectDepth(sphereContext, spotlightVP,
+		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)));
 
 	drawObjectDepth(models::bedContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::chairContext, spotlightVP, glm::mat4());
@@ -341,7 +369,18 @@ void renderShadowapSpotlight() {
 	drawObjectDepth(models::tableContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::wardrobeContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::potContext, spotlightVP, glm::mat4());
-	drawObjectDepth(models::ballContext, spotlightVP, glm::mat4());
+
+	if (lightSwitch)
+	{
+		drawObjectDepth(models::switchContext, spotlightVP, glm::eulerAngleY(-3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)));
+	}
+	else
+	{
+		drawObjectDepth(models::switchContext, spotlightVP, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)));
+	}
+
+
+	drawObjectDepth(models::ballContext, spotlightVP, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -414,7 +453,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, spotlightVP, 0.2f, 0.0f);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
-	glm::mat4 specshipCameraRotrationMatrix = glm::mat4({
+	specshipCameraRotrationMatrix = glm::mat4({
 		spaceshipSide.x,spaceshipSide.y,spaceshipSide.z,0,
 		spaceshipUp.x,spaceshipUp.y,spaceshipUp.z ,0,
 		-spaceshipDir.x,-spaceshipDir.y,-spaceshipDir.z,0,
