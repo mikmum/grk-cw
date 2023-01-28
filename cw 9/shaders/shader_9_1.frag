@@ -4,6 +4,7 @@ float AMBIENT = 0.03;
 float PI = 3.14;
 
 uniform sampler2D depthMap;
+uniform sampler2D spotlightDepthMap;
 
 uniform vec3 cameraPos;
 
@@ -28,6 +29,7 @@ uniform float exposition;
 in vec3 vecNormal;
 in vec3 worldPos;
 in vec4 sunSpacePos;
+in vec4 spotlightSpacePos;
 
 out vec4 outColor;
 
@@ -134,7 +136,7 @@ void main()
 
     float angle_atenuation = clamp((dot(-normalize(spotlightPos-worldPos),spotlightConeDir)-0.5)*3,0,1);
 	attenuatedlightColor = angle_atenuation*spotlightColor/pow(length(spotlightPos-worldPos),2);
-	ilumination=ilumination+PBRLight(spotlightDir,attenuatedlightColor,normal,viewDir);
+	ilumination=ilumination+PBRLight(spotlightDir,attenuatedlightColor*calculateShadow(normal, spotlightDir, spotlightSpacePos, spotlightDepthMap),normal,viewDir);
 
 	//sun
 	ilumination=ilumination+PBRLight(sunDir,sunColor*calculateShadow(normal, lightDir, sunSpacePos, depthMap),normal,viewDir);

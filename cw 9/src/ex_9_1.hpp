@@ -66,6 +66,9 @@ namespace models {
 GLuint depthMapFBO;
 GLuint depthMap;
 
+GLuint spotlightDepthMapFBO;
+GLuint spotlightDepthMap;
+
 GLuint program;
 GLuint programSun;
 GLuint programTest;
@@ -95,13 +98,14 @@ float aspectRatio = 1.f;
 float exposition = 1.f;
 
 glm::mat4 lightVP;
+glm::mat4 spotlightVP;
 
 glm::vec3 pointlightPos = glm::vec3(0, 2, 0);
 glm::vec3 pointlightColor = glm::vec3(0.9, 0.6, 0.6)*8;
 
 glm::vec3 spotlightPos = glm::vec3(0, 0, 0);
 glm::vec3 spotlightConeDir = glm::vec3(0, 0, 0);
-glm::vec3 spotlightColor = glm::vec3(0.4, 0.4, 0.9)*3;
+glm::vec3 spotlightColor = glm::vec3(0.4, 0.4, 0.9)*10;
 float spotlightPhi = 3.14 / 4;
 
 bool lightSwitch = true;
@@ -141,8 +145,28 @@ void initDepthMap()
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 }
+
+void initDepthMapSpotlight()
+{
+	glGenFramebuffers(1, &spotlightDepthMapFBO);
+
+	glGenTextures(1, &spotlightDepthMap);
+	glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, spotlightDepthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, spotlightDepthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 glm::mat4 createCameraMatrix()
 {
 	glm::vec3 cameraSide = glm::normalize(glm::cross(cameraDir,glm::vec3(0.f,1.f,0.f)));
@@ -159,7 +183,7 @@ glm::mat4 createCameraMatrix()
 	return cameraMatrix;
 }
 
-glm::mat4 createPerspectiveMatrix()
+glm::mat4 createPerspectiveMatrix(float ratio)
 {
 	
 	glm::mat4 perspectiveMatrix;
@@ -168,8 +192,8 @@ glm::mat4 createPerspectiveMatrix()
 	float a1 = glm::min(aspectRatio, 1.f);
 	float a2 = glm::min(1 / aspectRatio, 1.f);
 	perspectiveMatrix = glm::mat4({
-		1,0.,0.,0.,
-		0.,aspectRatio,0.,0.,
+		1,0. * ratio,0.,0.,
+		0.,aspectRatio * ratio,0.,0.,
 		0.,0.,(f+n) / (n - f),2*f * n / (n - f),
 		0.,0.,-1.,0.,
 		});
@@ -180,16 +204,22 @@ glm::mat4 createPerspectiveMatrix()
 	return perspectiveMatrix;
 }
 
-void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec3 color, glm::mat4 viewProjection,float roughness, float metallic) {
+void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec3 color, glm::mat4 viewProjection, glm::mat4 spotlightVP,float roughness, float metallic) {
 
-	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix(1.f) * createCameraMatrix();
 	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
 	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
 
 	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(program, "depthMap"), 0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glUniformMatrix4fv(glGetUniformLocation(program, "viewProjectionMatrix"), 1, GL_FALSE, (float*)&viewProjection);
+
+	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(glGetUniformLocation(program, "spotlightDepthMap"), 1);
+	glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
+	glUniformMatrix4fv(glGetUniformLocation(program, "spotlightVP"), 1, GL_FALSE, (float*)&spotlightVP);
 
 	glUniform1f(glGetUniformLocation(program, "exposition"), exposition);
 
@@ -225,7 +255,7 @@ void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec
 void drawSkyBox(Core::RenderContext& context, glm::mat4 modelMatrix) {
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(programSkybox);
-	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix(1.f) * createCameraMatrix();
 	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
 	glUniformMatrix4fv(glGetUniformLocation(programSkybox, "transformation"), 1, GL_FALSE, (float*)&transformation);
 	glUniform1i(glGetUniformLocation(programSkybox, "skybox"), 0);
@@ -279,6 +309,44 @@ void renderShadowapSun() {
 	glViewport(0, 0, WIDTH, HEIGHT);
 }
 
+void renderShadowapSpotlight() {
+	float time = glfwGetTime();
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	//uzupelnij o renderowanie glebokosci do teksturys
+	//ustawianie przestrzeni rysowania 
+	//bindowanie FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, spotlightDepthMapFBO);
+	//czyszczenie mapy głębokości 
+	glClear(GL_DEPTH_BUFFER_BIT);
+	//ustawianie programu
+	glUseProgram(programDepth);
+	spotlightVP = createPerspectiveMatrix(0.5f) * glm::lookAt(spotlightPos, spotlightPos + spotlightConeDir, glm::vec3(0, 1, 0));
+
+	drawObjectDepth(models::bedContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::chairContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::chairTwoContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::chairThreeContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::deskContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::doorContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::drawerContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::marbleBustContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::materaceContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::pillowContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::pillowTwoContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::pencilsContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::planeContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::roomContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::windowContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::window2Context, spotlightVP, glm::mat4());
+	drawObjectDepth(models::tableContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::wardrobeContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::potContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::ballContext, spotlightVP, glm::mat4());
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, WIDTH, HEIGHT);
+}
+
 void renderScene(GLFWwindow* window)
 {
 	glClearColor(0.4f, 0.4f, 0.8f, 1.0f);
@@ -286,12 +354,13 @@ void renderScene(GLFWwindow* window)
 	float time = glfwGetTime();
 	updateDeltaTime(time);
 	renderShadowapSun();
+	renderShadowapSpotlight();
 
 	drawSkyBox(models::cubeContext, glm::translate(cameraPos));
 
 	//space lamp
 	glUseProgram(programSun);
-	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix() * createCameraMatrix();
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix(1.f) * createCameraMatrix();
 	glm::mat4 transformation = viewProjectionMatrix * glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::translate(glm::vec3(0.f, -5.f, 0));
 	glUniformMatrix4fv(glGetUniformLocation(programSun, "transformation"), 1, GL_FALSE, (float*)&transformation);
 	if (lightSwitch)
@@ -307,42 +376,42 @@ void renderScene(GLFWwindow* window)
 
 	glUseProgram(program);
 
-	drawObjectPBR(sphereContext, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)), glm::vec3(0.2, 0.7, 0.3), lightVP, 0.3, 0.0);
+	drawObjectPBR(sphereContext, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)), glm::vec3(0.2, 0.7, 0.3), lightVP, spotlightVP, 0.3, 0.0);
 
 	drawObjectPBR(sphereContext,
 		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)),
-		glm::vec3(0.5, 0.5, 0.5), lightVP, 0.7, 0.0);
+		glm::vec3(0.5, 0.5, 0.5), lightVP, spotlightVP, 0.7, 0.0);
 
-	drawObjectPBR(models::bedContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::chairContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, 0.4f, 0.0f);
-	drawObjectPBR(models::chairTwoContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, 0.4f, 0.0f);
-	drawObjectPBR(models::chairThreeContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, 0.4f, 0.0f);
-	drawObjectPBR(models::deskContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::doorContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::marbleBustContext, glm::mat4(), glm::vec3(1.f, 1.f, 1.f), lightVP, 0.5f, 1.0f);
-	drawObjectPBR(models::materaceContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, 0.8f, 0.0f);
-	drawObjectPBR(models::pillowContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, 0.8f, 0.0f);
-	drawObjectPBR(models::pillowTwoContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, 0.8f, 0.0f);
-	drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, 0.1f, 0.0f);
-	drawObjectPBR(models::planeContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::roomContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, 0.8f, 0.0f);
-	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::tableContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, 0.1f, 0.0f);
+	drawObjectPBR(models::bedContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, spotlightVP,0.2f, 0.0f);
+	drawObjectPBR(models::chairContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
+	drawObjectPBR(models::chairTwoContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
+	drawObjectPBR(models::chairThreeContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
+	drawObjectPBR(models::deskContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::doorContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::marbleBustContext, glm::mat4(), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
+	drawObjectPBR(models::materaceContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
+	drawObjectPBR(models::pillowContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
+	drawObjectPBR(models::pillowTwoContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
+	drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
+	drawObjectPBR(models::planeContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::roomContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
+	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::tableContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
 
 	if (lightSwitch)
 	{
-		drawObjectPBR(models::switchContext, glm::eulerAngleY(-3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, 0.5f, 1.0f);
+		drawObjectPBR(models::switchContext, glm::eulerAngleY(-3.14f / 2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
 	}
 	else
 	{
-		drawObjectPBR(models::switchContext, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f/2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, 0.5f, 1.0f);
+		drawObjectPBR(models::switchContext, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f/2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
 	}
 
-	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, 0.2f, 0.0f);
+	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, spotlightVP, 0.2f, 0.0f);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
 	glm::mat4 specshipCameraRotrationMatrix = glm::mat4({
@@ -360,7 +429,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(shipContext,
 		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()) * glm::scale(glm::vec3(0.03f)),
 		glm::vec3(0.3, 0.3, 0.5),
-		lightVP, 0.2,1.0
+		lightVP, spotlightVP, 0.2,1.0
 	);
 
 	spotlightPos = spaceshipPos + 0.2 * spaceshipDir;
@@ -371,8 +440,8 @@ void renderScene(GLFWwindow* window)
 	//test depth buffer
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glUseProgram(programTest);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, depthMap);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
 	//Core::DrawContext(models::testContext);
 
 	glUseProgram(0);
@@ -463,6 +532,7 @@ void init(GLFWwindow* window)
 	loadCubemap(faces);
 
 	initDepthMap();
+	initDepthMapSpotlight();
 }
 
 void shutdown(GLFWwindow* window)
