@@ -185,7 +185,7 @@ glm::mat4 createCameraMatrix()
 	return cameraMatrix;
 }
 
-glm::mat4 createPerspectiveMatrix(float ratio)
+glm::mat4 createPerspectiveMatrix(float renderScale)
 {
 	
 	glm::mat4 perspectiveMatrix;
@@ -194,8 +194,8 @@ glm::mat4 createPerspectiveMatrix(float ratio)
 	float a1 = glm::min(aspectRatio, 1.f);
 	float a2 = glm::min(1 / aspectRatio, 1.f);
 	perspectiveMatrix = glm::mat4({
-		1,0. * ratio,0.,0.,
-		0.,aspectRatio * ratio,0.,0.,
+		1,0. * renderScale,0.,0.,
+		0.,aspectRatio * renderScale,0.,0.,
 		0.,0.,(f+n) / (n - f),2*f * n / (n - f),
 		0.,0.,-1.,0.,
 		});
@@ -477,11 +477,11 @@ void renderScene(GLFWwindow* window)
 
 
 	//test depth buffer
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glUseProgram(programTest);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
-	//Core::DrawContext(models::testContext);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glUseProgram(programTest);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
+		//Core::DrawContext(models::testContext);
 
 	glUseProgram(0);
 	glfwSwapBuffers(window);
