@@ -97,7 +97,7 @@ Core::RenderContext sphereContext;
 
 glm::vec3 sunPos = glm::vec3(-4.740971f, 2.149999f, 0.369280f);
 glm::vec3 sunDir = glm::vec3(-0.93633f, 0.351106, 0.003226f);
-glm::vec3 sunColor = glm::vec3(0.9f, 0.9f, 0.7f)*5;
+glm::vec3 sunColor = glm::vec3(0.9f, 0.9f, 0.7f)*20;
 
 glm::vec3 cameraPos = glm::vec3(0.479490f, 1.250000f, -2.124680f);
 glm::vec3 cameraDir = glm::vec3(-0.354510f, 0.000000f, 0.935054f);
@@ -651,7 +651,7 @@ void init(GLFWwindow* window)
 	normal::table = Core::LoadTexture("./textures/tableNormal.jpg");
 	normal::room = Core::LoadTexture("./textures/roomNormal.jpg");
 	normal::plane = Core::LoadTexture("./textures/planeNormal.jpg");
-	normal::wardrobe = Core::LoadTexture("./textures/wardrobeNormal.jpg");
+	normal::wardrobe = Core::LoadTexture("./textures/wardrobeNormal.png");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
