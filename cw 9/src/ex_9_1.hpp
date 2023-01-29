@@ -680,7 +680,7 @@ void init(GLFWwindow* window)
 	normal::pillow = Core::LoadTexture("./textures/pillowNormal.png");
 	normal::chair = Core::LoadTexture("./textures/chairNormal.png");
 	normal::desk = Core::LoadTexture("./textures/deskNormal.png");
-	normal::clay = Core::LoadTexture("./textures/clayNormal.png");
+	normal::clay = Core::LoadTexture("./textures/clayNormal.jpg");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
