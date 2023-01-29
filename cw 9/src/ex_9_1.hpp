@@ -511,6 +511,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::ball, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.8f, 0.0f);
 
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
@@ -635,7 +636,7 @@ void init(GLFWwindow* window)
 
 	texture::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
 	texture::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
-	normal::table = Core::LoadTexture("./textures/table.jpg");
+	texture::table = Core::LoadTexture("./textures/table.jpg");
 
 	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
 	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
