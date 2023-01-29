@@ -11,7 +11,6 @@ uniform sampler2D normalSampler;
 
 uniform vec3 cameraPos;
 
-uniform vec3 sunDir;
 uniform vec3 sunColor;
 
 uniform vec3 lightPos;
@@ -132,6 +131,7 @@ void main()
 
 	vec3 lightDir = normalize(lightDirTS);
 
+    vec3 sunDir = normalize(sunDirTS);
 
 	vec3 ambient = AMBIENT*color;
 	vec3 attenuatedlightColor = lightColor/pow(length(lightPos-worldPos),2);
