@@ -7,7 +7,7 @@
 
 #include "Shader_Loader.h"
 #include "Render_Utils.h"
-//#include "Texture.h"
+#include "Texture.h"
 
 #include "Box.cpp"
 #include <assimp/Importer.hpp>
@@ -23,6 +23,12 @@ int WIDTH = 500, HEIGHT = 500;
 
 namespace texture {
 	GLuint cubemapTexture;
+	GLuint ball;
+	GLuint door;
+}
+namespace normal {
+	GLuint ball;
+	GLuint door;
 }
 
 std::vector<std::string> faces =
@@ -255,6 +261,56 @@ void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec
 
 }
 
+void drawObjectPBRTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint normal, glm::mat4 viewProjection, glm::mat4 spotlightVP, float roughness, float metallic) {
+
+	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix(1.f) * createCameraMatrix();
+	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
+	glUniformMatrix4fv(glGetUniformLocation(programTex, "transformation"), 1, GL_FALSE, (float*)&transformation);
+	glUniformMatrix4fv(glGetUniformLocation(programTex, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(programTex, "depthMap"), 0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glUniformMatrix4fv(glGetUniformLocation(programTex, "viewProjectionMatrix"), 1, GL_FALSE, (float*)&viewProjection);
+
+	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(glGetUniformLocation(programTex, "spotlightDepthMap"), 1);
+	glBindTexture(GL_TEXTURE_2D, spotlightDepthMap);
+	glUniformMatrix4fv(glGetUniformLocation(programTex, "spotlightVP"), 1, GL_FALSE, (float*)&spotlightVP);
+
+	glUniform1f(glGetUniformLocation(programTex, "exposition"), exposition);
+
+	glUniform1f(glGetUniformLocation(programTex, "roughness"), roughness);
+	glUniform1f(glGetUniformLocation(programTex, "metallic"), metallic);
+
+	glUniform3f(glGetUniformLocation(programTex, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+
+	glUniform3f(glGetUniformLocation(programTex, "sunDir"), sunDir.x, sunDir.y, sunDir.z);
+	glUniform3f(glGetUniformLocation(programTex, "sunColor"), sunColor.x, sunColor.y, sunColor.z);
+
+	glUniform3f(glGetUniformLocation(programTex, "lightPos"), pointlightPos.x, pointlightPos.y, pointlightPos.z);
+
+	if (lightSwitch)
+	{
+		glUniform3f(glGetUniformLocation(programTex, "lightColor"), pointlightColor.x, pointlightColor.y, pointlightColor.z);
+	}
+	else
+	{
+		glUniform3f(glGetUniformLocation(programTex, "lightColor"), 0.f, 0.f, 0.f);
+	}
+
+	glUniform3f(glGetUniformLocation(programTex, "spotlightConeDir"), spotlightConeDir.x, spotlightConeDir.y, spotlightConeDir.z);
+	glUniform3f(glGetUniformLocation(programTex, "spotlightPos"), spotlightPos.x, spotlightPos.y, spotlightPos.z);
+	glUniform3f(glGetUniformLocation(programTex, "spotlightColor"), spotlightColor.x, spotlightColor.y, spotlightColor.z);
+	glUniform1f(glGetUniformLocation(programTex, "spotlightPhi"), spotlightPhi);
+
+	Core::SetActiveTexture(texture, "colorTexture", programTex, 2);
+	Core::SetActiveTexture(normal, "normalSampler", programTex, 3);
+
+	Core::DrawContext(context);
+
+}
+
 void drawSkyBox(Core::RenderContext& context, glm::mat4 modelMatrix) {
 	glDisable(GL_DEPTH_TEST);
 	glUseProgram(programSkybox);
@@ -451,7 +507,10 @@ void renderScene(GLFWwindow* window)
 		drawObjectPBR(models::switchContext, glm::eulerAngleZ(3.14f) * glm::eulerAngleY(3.14f/2.f) * glm::translate(glm::vec3(0.f, 0.f, -3.0899f)), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
 	}
 
-	drawObjectPBR(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove+3.3592f)) * glm::eulerAngleX(ballMove*1.5f), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, spotlightVP, 0.2f, 0.0f);
+	glUseProgram(programTex);
+	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::ball, lightVP, spotlightVP, 0.2f, 0.0f);
+	
+	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
 	specshipCameraRotrationMatrix = glm::mat4({
@@ -536,6 +595,7 @@ void init(GLFWwindow* window)
 
 	glEnable(GL_DEPTH_TEST);
 	program = shaderLoader.CreateProgram("shaders/shader_9_1.vert", "shaders/shader_9_1.frag");
+	programTex = shaderLoader.CreateProgram("shaders/shader_9_1_texture.vert", "shaders/shader_9_1_texture.frag");
 	programTest = shaderLoader.CreateProgram("shaders/test.vert", "shaders/test.frag");
 	programSun = shaderLoader.CreateProgram("shaders/shader_8_sun.vert", "shaders/shader_8_sun.frag");
 	programSkybox = shaderLoader.CreateProgram("shaders/shader_skybox.vert", "shaders/shader_skybox.frag");
@@ -570,6 +630,12 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/test.obj", models::testContext);
 	loadModelToContext("./models/cube.obj", models::cubeContext);
 	loadCubemap(faces);
+
+	texture::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
+	texture::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
+
+	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
+	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
 
 	initDepthMap();
 	initDepthMapSpotlight();

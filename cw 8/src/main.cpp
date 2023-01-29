@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "ex_8_1.hpp"
+#include "ex_8_2.hpp"
 
 
 
