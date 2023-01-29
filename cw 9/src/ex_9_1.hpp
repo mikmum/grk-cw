@@ -35,6 +35,8 @@ namespace texture {
 	GLuint chair;
 	GLuint desk;
 	GLuint clay;
+	GLuint marble;
+	GLuint window;
 }
 namespace normal {
 	GLuint ball;
@@ -49,6 +51,8 @@ namespace normal {
 	GLuint chair;
 	GLuint desk;
 	GLuint clay;
+	GLuint marble;
+	GLuint window;
 }
 
 std::vector<std::string> faces =
@@ -501,10 +505,7 @@ void renderScene(GLFWwindow* window)
 		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)),
 		glm::vec3(0.5, 0.5, 0.5), lightVP, spotlightVP, 0.7, 0.0);
 	//drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::marbleBustContext, glm::mat4(), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
 	//drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
-	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
 
 	if (lightSwitch)
 	{
@@ -524,6 +525,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::chairThreeContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBRTexture(models::deskContext, glm::mat4(), texture::desk, normal::desk, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::marbleBustContext, glm::mat4(), texture::marble, normal::marble, lightVP, spotlightVP, 0.5f, 1.0f);
 	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::room, normal::room, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::planeContext, glm::mat4(), texture::plane, normal::plane, lightVP, spotlightVP, 0.2f, 0.0f);
@@ -533,6 +535,8 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::pillowTwoContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::potContext, glm::mat4(),texture::clay, normal::clay, lightVP, spotlightVP, 0.1f, 0.0f);
+	drawObjectPBRTexture(models::windowContext, glm::mat4(), texture::window, normal::window, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::window2Context, glm::mat4(), texture::window, normal::window,  lightVP, spotlightVP, 0.2f, 0.0f);
 
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
@@ -668,6 +672,8 @@ void init(GLFWwindow* window)
 	texture::chair = Core::LoadTexture("./textures/chair.jpg");
 	texture::desk = Core::LoadTexture("./textures/desk.jpg");
 	texture::clay = Core::LoadTexture("./textures/clay.jpg");
+	texture::marble = Core::LoadTexture("./textures/marble.jpg");
+	texture::window = Core::LoadTexture("./textures/window.jpg");
 
 	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
 	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -681,6 +687,8 @@ void init(GLFWwindow* window)
 	normal::chair = Core::LoadTexture("./textures/chairNormal.png");
 	normal::desk = Core::LoadTexture("./textures/deskNormal.png");
 	normal::clay = Core::LoadTexture("./textures/clayNormal.jpg");
+	normal::marble = Core::LoadTexture("./textures/marbleNormal.png");
+	normal::window = Core::LoadTexture("./textures/windowNormal.png");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
