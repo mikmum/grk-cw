@@ -34,6 +34,7 @@ namespace texture {
 	GLuint pillow;
 	GLuint chair;
 	GLuint desk;
+	GLuint clay;
 }
 namespace normal {
 	GLuint ball;
@@ -47,6 +48,7 @@ namespace normal {
 	GLuint pillow;
 	GLuint chair;
 	GLuint desk;
+	GLuint clay;
 }
 
 std::vector<std::string> faces =
@@ -503,7 +505,6 @@ void renderScene(GLFWwindow* window)
 	//drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
 	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
 
 	if (lightSwitch)
 	{
@@ -531,6 +532,7 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::pillowContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::pillowTwoContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
+	drawObjectPBRTexture(models::potContext, glm::mat4(),texture::clay, normal::clay, lightVP, spotlightVP, 0.1f, 0.0f);
 
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
@@ -663,8 +665,9 @@ void init(GLFWwindow* window)
 	texture::bed = Core::LoadTexture("./textures/bed.jpg");
 	texture::sheet = Core::LoadTexture("./textures/sheet.jpg");
 	texture::pillow = Core::LoadTexture("./textures/pillow.jpg");
-	texture::chair = Core::LoadTexture("./textures/char.jpg");
+	texture::chair = Core::LoadTexture("./textures/chair.jpg");
 	texture::desk = Core::LoadTexture("./textures/desk.jpg");
+	texture::clay = Core::LoadTexture("./textures/clay.jpg");
 
 	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
 	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -677,6 +680,7 @@ void init(GLFWwindow* window)
 	normal::pillow = Core::LoadTexture("./textures/pillowNormal.png");
 	normal::chair = Core::LoadTexture("./textures/chairNormal.png");
 	normal::desk = Core::LoadTexture("./textures/deskNormal.png");
+	normal::clay = Core::LoadTexture("./textures/clayNormal.png");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
