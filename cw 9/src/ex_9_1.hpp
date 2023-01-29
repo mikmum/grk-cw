@@ -29,6 +29,8 @@ namespace texture {
 	GLuint room;
 	GLuint plane;
 	GLuint wardrobe;
+	GLuint bed;
+	GLuint sheet;
 }
 namespace normal {
 	GLuint ball;
@@ -37,6 +39,8 @@ namespace normal {
 	GLuint room;
 	GLuint plane;
 	GLuint wardrobe;
+	GLuint bed;
+	GLuint sheet;
 }
 
 std::vector<std::string> faces =
@@ -75,6 +79,7 @@ namespace models {
 	Core::RenderContext pillowContext;
 	Core::RenderContext pillowTwoContext;
 	Core::RenderContext switchContext;
+	Core::RenderContext sheetContext;
 }
 
 GLuint depthMapFBO;
@@ -368,6 +373,7 @@ void renderShadowapSun() {
 	drawObjectDepth(models::materaceContext, lightVP, glm::mat4());
 	drawObjectDepth(models::pillowContext, lightVP, glm::mat4());
 	drawObjectDepth(models::pillowTwoContext, lightVP, glm::mat4());
+	drawObjectDepth(models::sheetContext, lightVP, glm::mat4());
 	drawObjectDepth(models::pencilsContext, lightVP, glm::mat4());
 	drawObjectDepth(models::planeContext, lightVP, glm::mat4());
 	drawObjectDepth(models::roomContext, lightVP, glm::mat4());
@@ -429,6 +435,7 @@ void renderShadowapSpotlight() {
 	drawObjectDepth(models::pencilsContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::planeContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::roomContext, spotlightVP, glm::mat4());
+	drawObjectDepth(models::sheetContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::windowContext, spotlightVP, glm::mat4());
 	drawObjectDepth(models::window2Context, spotlightVP, glm::mat4());
 	drawObjectDepth(models::tableContext, spotlightVP, glm::mat4());
@@ -485,8 +492,6 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(sphereContext,
 		glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::eulerAngleY(time) * glm::translate(glm::vec3(1.f, 0, 0)) * glm::scale(glm::vec3(0.1f)),
 		glm::vec3(0.5, 0.5, 0.5), lightVP, spotlightVP, 0.7, 0.0);
-
-	drawObjectPBR(models::bedContext, glm::mat4(), glm::vec3(0.03f, 0.03f, 0.03f), lightVP, spotlightVP,0.2f, 0.0f);
 	drawObjectPBR(models::chairContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBR(models::chairTwoContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBR(models::chairThreeContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
@@ -511,12 +516,15 @@ void renderScene(GLFWwindow* window)
 	}
 
 	glUseProgram(programTex);
+
+	drawObjectPBRTexture(models::bedContext, glm::mat4(), texture::bed, normal::bed, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::ball, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::room, normal::room, lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBRTexture(models::planeContext, glm::mat4(), texture::plane, normal::plane, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::wardrobeContext, glm::mat4(), texture::wardrobe, normal::wardrobe, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::sheetContext, glm::mat4(), texture::sheet, normal::sheet, lightVP, spotlightVP, 0.8f, 0.0f);
 
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
@@ -626,6 +634,7 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/obiekty/pillow/pillow.obj", models::pillowContext);
 	loadModelToContext("./models/obiekty/pillow/pillowTwo.obj", models::pillowTwoContext);
 	loadModelToContext("./models/obiekty/switch/switch.obj", models::switchContext);
+	loadModelToContext("./models/obiekty/sheet/sheet.obj", models::sheetContext);
 
 	loadModelToContext("./models/sphere.obj", sphereContext);
 	loadModelToContext("./models/spaceship.obj", shipContext);
@@ -645,6 +654,8 @@ void init(GLFWwindow* window)
 	texture::room = Core::LoadTexture("./textures/room.jpg");
 	texture::plane = Core::LoadTexture("./textures/plane.jpg");
 	texture::wardrobe = Core::LoadTexture("./textures/wardrobe.jpg");
+	texture::bed = Core::LoadTexture("./textures/bed.jpg");
+	texture::sheet = Core::LoadTexture("./textures/sheet.jpg");
 
 	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
 	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -652,6 +663,8 @@ void init(GLFWwindow* window)
 	normal::room = Core::LoadTexture("./textures/roomNormal.jpg");
 	normal::plane = Core::LoadTexture("./textures/planeNormal.jpg");
 	normal::wardrobe = Core::LoadTexture("./textures/wardrobeNormal.png");
+	normal::bed = Core::LoadTexture("./textures/bedNormal.png");
+	normal::sheet = Core::LoadTexture("./textures/sheetNormal.png");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
