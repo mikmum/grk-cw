@@ -53,6 +53,7 @@ namespace normal {
 	GLuint clay;
 	GLuint marble;
 	GLuint window;
+	GLuint def;
 }
 
 std::vector<std::string> faces =
@@ -114,7 +115,7 @@ Core::RenderContext sphereContext;
 
 glm::vec3 sunPos = glm::vec3(-4.740971f, 2.149999f, 0.369280f);
 glm::vec3 sunDir = glm::vec3(-0.93633f, 0.351106, 0.003226f);
-glm::vec3 sunColor = glm::vec3(0.9f, 0.9f, 0.7f)*20;
+glm::vec3 sunColor = glm::vec3(0.9f, 0.9f, 0.7f)*10;
 
 glm::vec3 cameraPos = glm::vec3(0.479490f, 1.250000f, -2.124680f);
 glm::vec3 cameraDir = glm::vec3(-0.354510f, 0.000000f, 0.935054f);
@@ -126,7 +127,7 @@ GLuint VAO,VBO;
 
 float aspectRatio = 1.f;
 
-float exposition = 1.f;
+float exposition = 1.5f;
 
 glm::mat4 lightVP;
 glm::mat4 spotlightVP;
@@ -519,7 +520,7 @@ void renderScene(GLFWwindow* window)
 	glUseProgram(programTex);
 
 	drawObjectPBRTexture(models::bedContext, glm::mat4(), texture::bed, normal::bed, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::ball, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::def, lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBRTexture(models::chairContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBRTexture(models::chairTwoContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBRTexture(models::chairThreeContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
@@ -660,7 +661,7 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/cube.obj", models::cubeContext);
 	loadCubemap(faces);
 
-	texture::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
+	texture::ball = Core::LoadTexture("./textures/ball.jpg");
 	texture::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
 	texture::table = Core::LoadTexture("./textures/table.jpg");
 	texture::room = Core::LoadTexture("./textures/room.jpg");
@@ -675,7 +676,7 @@ void init(GLFWwindow* window)
 	texture::marble = Core::LoadTexture("./textures/marble.jpg");
 	texture::window = Core::LoadTexture("./textures/window.jpg");
 
-	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
+	normal::ball = Core::LoadTexture("./textures/ballNormal.png");
 	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
 	normal::table = Core::LoadTexture("./textures/tableNormal.jpg");
 	normal::room = Core::LoadTexture("./textures/roomNormal.jpg");
@@ -689,6 +690,7 @@ void init(GLFWwindow* window)
 	normal::clay = Core::LoadTexture("./textures/clayNormal.jpg");
 	normal::marble = Core::LoadTexture("./textures/marbleNormal.png");
 	normal::window = Core::LoadTexture("./textures/windowNormal.png");
+	normal::def = Core::LoadTexture("./textures/default.png");
 	initDepthMap();
 	initDepthMapSpotlight();
 }
