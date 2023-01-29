@@ -11,7 +11,6 @@ uniform mat4 modelMatrix;
 uniform mat4 viewProjectionMatrix;
 uniform mat4 spotlightVP;
 
-out vec3 vecNormal;
 out vec3 worldPos;
 out vec4 sunSpacePos;
 out vec4 spotlightSpacePos;
@@ -31,7 +30,7 @@ out vec2 texCoord;
 void main()
 {
 	worldPos = (modelMatrix* vec4(vertexPosition,1)).xyz;
-	vecNormal = (modelMatrix* vec4(vertexNormal,0)).xyz;
+	vec3 vecNormal = (modelMatrix* vec4(vertexNormal,0)).xyz;
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
 	
 	vec3 w_tangent = normalize(mat3(modelMatrix)*vertexTangent);

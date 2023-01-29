@@ -27,7 +27,6 @@ uniform float roughness;
 
 uniform float exposition;
 
-in vec3 vecNormal;
 in vec3 worldPos;
 in vec4 sunSpacePos;
 in vec4 spotlightSpacePos;
@@ -123,18 +122,15 @@ void main()
 {
     vec4 textureColor = texture2D(colorTexture, texCoord);
 	vec4 normalTexture = texture2D(normalSampler, texCoord);
+    normalTexture = normalize(2*normalTexture - 1);
 
-	vec4 finalColor = mix(textureColor, normalTexture, normalTexture.r);
-    color = finalColor.xyz;
+    color = textureColor.xyz;
 
-	//vec3 normal = vec3(0,0,1);
-    vec3 normal = normalize(vecNormal);
+	vec3 normal = normalTexture.xyz;
 
-    //vec3 viewDir = normalize(viewDirTS);
-    vec3 viewDir = normalize(cameraPos-worldPos);
+    vec3 viewDir = normalize(viewDirTS);
 
-	//vec3 lightDir = normalize(lightDirTS);
-	vec3 lightDir = normalize(lightPos-worldPos);
+	vec3 lightDir = normalize(lightDirTS);
 
 
 	vec3 ambient = AMBIENT*color;
@@ -143,8 +139,7 @@ void main()
 	ilumination = ambient+PBRLight(lightDir,attenuatedlightColor,normal,viewDir);
 	
 	//flashlight
-	//vec3 spotlightDir= normalize(spotlightDirTS);
-	vec3 spotlightDir= normalize(spotlightPos-worldPos);
+	vec3 spotlightDir= normalize(spotlightDirTS);
 	
 
     float angle_atenuation = clamp((dot(-normalize(spotlightPos-worldPos),spotlightConeDir)-0.5)*3,0,1);

@@ -25,10 +25,12 @@ namespace texture {
 	GLuint cubemapTexture;
 	GLuint ball;
 	GLuint door;
+	GLuint table;
 }
 namespace normal {
 	GLuint ball;
 	GLuint door;
+	GLuint table;
 }
 
 std::vector<std::string> faces =
@@ -483,18 +485,16 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBR(models::chairTwoContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBR(models::chairThreeContext, glm::mat4(), glm::vec3(0.195239f, 0.37728f, 0.8f), lightVP, spotlightVP, 0.4f, 0.0f);
 	drawObjectPBR(models::deskContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::doorContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
+	//drawObjectPBR(models::drawerContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::marbleBustContext, glm::mat4(), glm::vec3(1.f, 1.f, 1.f), lightVP, spotlightVP, 0.5f, 1.0f);
 	drawObjectPBR(models::materaceContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBR(models::pillowContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBR(models::pillowTwoContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
+	//drawObjectPBR(models::pencilsContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
 	drawObjectPBR(models::planeContext, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::roomContext, glm::mat4(), glm::vec3(0.9f, 0.9f, 0.9f), lightVP, spotlightVP, 0.8f, 0.0f);
 	drawObjectPBR(models::windowContext, glm::mat4() , glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::window2Context, glm::mat4(), glm::vec3(0.402978f, 0.120509f, 0.057729f), lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBR(models::tableContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::wardrobeContext, glm::mat4(), glm::vec3(0.428691f, 0.08022f, 0.036889f), lightVP, spotlightVP, 0.2f, 0.0f);
 	drawObjectPBR(models::potContext, glm::mat4(), glm::vec3(0.10039f, 0.018356f, 0.001935f), lightVP, spotlightVP, 0.1f, 0.0f);
 
@@ -509,7 +509,9 @@ void renderScene(GLFWwindow* window)
 
 	glUseProgram(programTex);
 	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::ball, lightVP, spotlightVP, 0.2f, 0.0f);
-	
+	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f);
+
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
@@ -633,9 +635,11 @@ void init(GLFWwindow* window)
 
 	texture::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
 	texture::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
+	normal::table = Core::LoadTexture("./textures/table.jpg");
 
-	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg");
-	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg");
+	normal::ball = Core::LoadTexture("./models/obiekty/ball/ball_diffues.jpg"); //TODO
+	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
+	normal::table = Core::LoadTexture("./textures/tableNormal.jpg");
 
 	initDepthMap();
 	initDepthMapSpotlight();
