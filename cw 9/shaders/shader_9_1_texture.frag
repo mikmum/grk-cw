@@ -10,6 +10,7 @@ uniform sampler2D colorTexture;
 uniform sampler2D normalSampler;
 
 uniform vec3 cameraPos;
+uniform bool flipNormal;
 
 uniform vec3 sunColor;
 
@@ -124,8 +125,15 @@ void main()
     normalTexture = normalize(2*normalTexture - 1);
 
     color = textureColor.xyz;
-
-	vec3 normal = normalTexture.xyz;
+    vec3 normal;
+    if(flipNormal)
+    {
+	    normal = -normalTexture.xyz;
+    }
+    else
+    {
+        normal = normalTexture.xyz;
+    }
 
     vec3 viewDir = normalize(viewDirTS);
 

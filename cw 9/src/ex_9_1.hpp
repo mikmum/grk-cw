@@ -287,7 +287,7 @@ void drawObjectPBR(Core::RenderContext& context, glm::mat4 modelMatrix, glm::vec
 
 }
 
-void drawObjectPBRTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint normal, glm::mat4 viewProjection, glm::mat4 spotlightVP, float roughness, float metallic) {
+void drawObjectPBRTexture(Core::RenderContext& context, glm::mat4 modelMatrix, GLuint texture, GLuint normal, glm::mat4 viewProjection, glm::mat4 spotlightVP, float roughness, float metallic, bool flipNormal) {
 
 	glm::mat4 viewProjectionMatrix = createPerspectiveMatrix(1.f) * createCameraMatrix();
 	glm::mat4 transformation = viewProjectionMatrix * modelMatrix;
@@ -315,6 +315,7 @@ void drawObjectPBRTexture(Core::RenderContext& context, glm::mat4 modelMatrix, G
 	glUniform3f(glGetUniformLocation(programTex, "sunColor"), sunColor.x, sunColor.y, sunColor.z);
 
 	glUniform3f(glGetUniformLocation(programTex, "lightPos"), pointlightPos.x, pointlightPos.y, pointlightPos.z);
+	glUniform1i(glGetUniformLocation(programTex, "flipNormal"), flipNormal);
 
 	if (lightSwitch)
 	{
@@ -535,25 +536,25 @@ void renderScene(GLFWwindow* window)
 
 	glUseProgram(programTex);
 
-	drawObjectPBRTexture(models::bedContext, glm::mat4(), texture::bed, normal::bed, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::def, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::chairContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
-	drawObjectPBRTexture(models::chairTwoContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
-	drawObjectPBRTexture(models::chairThreeContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f);
-	drawObjectPBRTexture(models::deskContext, glm::mat4(), texture::desk, normal::desk, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::marbleBustContext, glm::mat4(), texture::marble, normal::marble, lightVP, spotlightVP, 0.5f, 1.0f);
-	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::room, normal::room, lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBRTexture(models::planeContext, glm::mat4(), texture::plane, normal::plane, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::wardrobeContext, glm::mat4(), texture::wardrobe, normal::wardrobe, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::sheetContext, glm::mat4(), texture::sheet, normal::sheet, lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBRTexture(models::pillowContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBRTexture(models::pillowTwoContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f);
-	drawObjectPBRTexture(models::potContext, glm::mat4(),texture::clay, normal::clay, lightVP, spotlightVP, 0.1f, 0.0f);
-	drawObjectPBRTexture(models::windowContext, glm::mat4(), texture::window, normal::window, lightVP, spotlightVP, 0.2f, 0.0f);
-	drawObjectPBRTexture(models::window2Context, glm::mat4(), texture::window, normal::window,  lightVP, spotlightVP, 0.2f, 0.0f);
+	drawObjectPBRTexture(models::bedContext, glm::mat4(), texture::bed, normal::bed, lightVP, spotlightVP, 0.2f, 0.0f, true);
+	drawObjectPBRTexture(models::ballContext, glm::translate(glm::vec3(-0.46428f, -0.95f, ballMove + 3.3592f)) * glm::eulerAngleX(ballMove * 1.5f), texture::ball, normal::def, lightVP, spotlightVP, 0.2f, 0.0f, true);
+	drawObjectPBRTexture(models::chairContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f, true);
+	drawObjectPBRTexture(models::chairTwoContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f, true);
+	drawObjectPBRTexture(models::chairThreeContext, glm::mat4(), texture::chair, normal::chair, lightVP, spotlightVP, 0.4f, 0.0f, true);
+	drawObjectPBRTexture(models::deskContext, glm::mat4(), texture::desk, normal::desk, lightVP, spotlightVP, 0.2f, 0.0f, true);
+	drawObjectPBRTexture(models::doorContext, glm::mat4(), texture::door, normal::door, lightVP, spotlightVP, 0.2f, 0.0f, false);
+	drawObjectPBRTexture(models::marbleBustContext, glm::mat4(), texture::marble, normal::marble, lightVP, spotlightVP, 0.5f, 1.0f, true);
+	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, 0.2f, 0.0f, false);
+	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::room, normal::room, lightVP, spotlightVP, 0.8f, 0.0f, false);
+	drawObjectPBRTexture(models::planeContext, glm::mat4(), texture::plane, normal::plane, lightVP, spotlightVP, 0.2f, 0.0f, false);
+	drawObjectPBRTexture(models::wardrobeContext, glm::mat4(), texture::wardrobe, normal::wardrobe, lightVP, spotlightVP, 0.2f, 0.0f, false);
+	drawObjectPBRTexture(models::sheetContext, glm::mat4(), texture::sheet, normal::sheet, lightVP, spotlightVP, 0.8f, 0.0f, true);
+	drawObjectPBRTexture(models::pillowContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f, true);
+	drawObjectPBRTexture(models::pillowTwoContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f, true);
+	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, 0.8f, 0.0f, false);
+	drawObjectPBRTexture(models::potContext, glm::mat4(),texture::clay, normal::clay, lightVP, spotlightVP, 0.1f, 0.0f, false);
+	drawObjectPBRTexture(models::windowContext, glm::mat4(), texture::window, normal::window, lightVP, spotlightVP, 0.2f, 0.0f, false);
+	drawObjectPBRTexture(models::window2Context, glm::mat4(), texture::window, normal::window,  lightVP, spotlightVP, 0.2f, 0.0f, false);
 
 	glUseProgram(program);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
