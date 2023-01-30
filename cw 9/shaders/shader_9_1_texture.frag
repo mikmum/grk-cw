@@ -46,7 +46,7 @@ vec3 color;
 float calculateShadow(vec3 normal, vec3 light, vec4 pos, sampler2D depth){
     vec4 normalizedPos = (pos / pos.w) * 0.5 + 0.5;
     float closestDepth = texture2D(depth, normalizedPos.xy).r;
-    float bias = max(0.03* (1.0-dot(normal,light)),0.003);
+    float bias = max(0.01* (1.0-dot(normal,light)),0.003);
 
     if (closestDepth + bias > normalizedPos.z)
     {

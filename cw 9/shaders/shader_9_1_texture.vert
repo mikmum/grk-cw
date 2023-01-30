@@ -26,11 +26,11 @@ out vec3 spotlightDirTS;
 out vec3 sunDirTS;
 
 out vec2 texCoord;
-
+ 
 void main()
 {
 	worldPos = (modelMatrix* vec4(vertexPosition,1)).xyz;
-	vec3 vecNormal = (modelMatrix* vec4(vertexNormal,0)).xyz;
+	vec3 vecNormal = normalize((modelMatrix* vec4(vertexNormal,0)).xyz);
 	gl_Position = transformation * vec4(vertexPosition, 1.0);
 	
 	vec3 w_tangent = normalize(mat3(modelMatrix)*vertexTangent);

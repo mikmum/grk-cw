@@ -427,7 +427,23 @@ void renderShadowapSpotlight() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	//ustawianie programu
 	glUseProgram(programDepth);
-	spotlightVP = createPerspectiveMatrix(0.5f) * glm::lookAt(spotlightPos, spotlightPos + spotlightConeDir, glm::vec3(0, 1, 0));
+
+	glm::mat4 perspectiveMatrix;
+	float n = 0.05;
+	float f = 20.;
+	float a1 = glm::min(aspectRatio, 1.f);
+	float a2 = glm::min(1 / aspectRatio, 1.f);
+	float renderScale=0.3;
+	perspectiveMatrix = glm::mat4({
+		renderScale,0.,0.,0.,
+		0., renderScale,0.,0.,
+		0.,0.,(f + n) / (n - f),2 * f * n / (n - f),
+		0.,0.,-1.,0.,
+		});
+
+
+	perspectiveMatrix = glm::transpose(perspectiveMatrix);
+	spotlightVP = perspectiveMatrix * glm::lookAt(spotlightPos, spotlightPos + spotlightConeDir, glm::vec3(0, 1, 0));
 
 	drawObjectDepth(sphereContext, spotlightVP, glm::translate(pointlightPos) * glm::scale(glm::vec3(0.1)) * glm::eulerAngleY(time / 3) * glm::translate(glm::vec3(4.f, -5.f, 0)) * glm::scale(glm::vec3(0.3f)));
 
