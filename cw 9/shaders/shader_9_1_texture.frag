@@ -1,6 +1,5 @@
 #version 430 core
 
-float AMBIENT = 0.03;
 float PI = 3.14;
 
 uniform sampler2D depthMap;
@@ -8,6 +7,9 @@ uniform sampler2D spotlightDepthMap;
 
 uniform sampler2D colorTexture;
 uniform sampler2D normalSampler;
+uniform sampler2D metallicSampler;
+uniform sampler2D roughnessSampler;
+uniform sampler2D aoSampler;
 
 uniform vec3 cameraPos;
 uniform bool flipNormal;
@@ -22,8 +24,6 @@ uniform vec3 spotlightColor;
 uniform vec3 spotlightConeDir;
 uniform vec3 spotlightPhi;
 
-uniform float metallic;
-uniform float roughness;
 
 uniform float exposition;
 
@@ -43,6 +43,10 @@ in vec3 test;
 in vec2 texCoord;
 
 vec3 color;
+
+float metallic;
+float roughness;
+float AMBIENT;
 
 float calculateShadow(vec3 normal, vec3 light, vec4 pos, sampler2D depth){
     vec4 normalizedPos = (pos / pos.w) * 0.5 + 0.5;
@@ -121,7 +125,12 @@ vec3 PBRLight(vec3 lightDir, vec3 radiance, vec3 normal, vec3 V){
 void main()
 {
     vec4 textureColor = texture2D(colorTexture, texCoord);
+
 	vec4 normalTexture = texture2D(normalSampler, texCoord);
+    vec4 metallicTexture = texture2D(metallicSampler, texCoord);
+    vec4 aoTexture = texture2D(aoSampler, texCoord);
+    vec4 roughnessTexture = texture2D(roughnessSampler, texCoord);
+
     normalTexture = normalize(2*normalTexture - 1);
 
     color = textureColor.xyz;
@@ -129,10 +138,17 @@ void main()
     if(flipNormal)
     {
 	    normal = -normalTexture.xyz;
+        metallic = -metallicTexture.r;
+        AMBIENT = -aoTexture.r;
+        roughness = -roughnessTexture.r;
+
     }
     else
     {
         normal = normalTexture.xyz;
+        metallic = metallicTexture.r;
+        AMBIENT = aoTexture.r;
+        roughness = roughnessTexture.r;
     }
 
     vec3 viewDir = normalize(viewDirTS);
