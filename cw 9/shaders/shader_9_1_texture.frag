@@ -138,18 +138,15 @@ void main()
     if(flipNormal)
     {
 	    normal = -normalTexture.xyz;
-        metallic = -metallicTexture.r;
-        AMBIENT = -aoTexture.r;
-        roughness = -roughnessTexture.r;
 
     }
     else
     {
         normal = normalTexture.xyz;
-        metallic = metallicTexture.r;
-        AMBIENT = aoTexture.r;
-        roughness = roughnessTexture.r;
     }
+    metallic = metallicTexture.r;
+    AMBIENT = aoTexture.r;
+    roughness = roughnessTexture.r;
     //normal = vec3(0.f,0.f,1.f);
     vec3 viewDir = normalize(viewDirTS);
 
@@ -175,7 +172,7 @@ void main()
 
     
 	outColor = vec4(vec3(1.0) - exp(-ilumination*exposition),1);
-	//outColor = vec4(roughness,metallic,0,1);
+	//outColor = vec4(roughness,roughness,roughness,1);
     //outColor = vec4(test;
     //outColor = vec4(normal,1);
 }

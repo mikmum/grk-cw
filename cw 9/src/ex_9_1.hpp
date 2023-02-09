@@ -181,7 +181,7 @@ GLuint VAO,VBO;
 
 float aspectRatio = 1.f;
 
-float exposition = 1.5f;
+float exposition = 1.f;
 
 glm::mat4 lightVP;
 glm::mat4 spotlightVP;
@@ -604,11 +604,11 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::tableContext, glm::mat4(), texture::table, normal::table, lightVP, spotlightVP, roughness::table, metallic :: table, ao :: table, false);
 	drawObjectPBRTexture(models::roomContext, glm::mat4(), texture::room, normal::room, lightVP, spotlightVP, roughness::room, metallic :: room, ao :: room, false);
 	drawObjectPBRTexture(models::planeContext, glm::mat4(), texture::plane, normal::plane, lightVP, spotlightVP, roughness::plane, metallic::plane, ao::plane, false);
-	drawObjectPBRTexture(models::wardrobeContext, glm::mat4(), texture::wardrobe, normal::wardrobe, lightVP, spotlightVP, roughness::wardrobe, metallic::wardrobe, ao::wardrobe, true);
+	drawObjectPBRTexture(models::wardrobeContext, glm::mat4(), texture::wardrobe, normal::wardrobe, lightVP, spotlightVP, roughness::wardrobe, metallic::wardrobe, ao::wardrobe, false);
 	drawObjectPBRTexture(models::sheetContext, glm::mat4(), texture::sheet, normal::sheet, lightVP, spotlightVP, roughness::sheet, metallic::sheet, ao::sheet, false);
 	drawObjectPBRTexture(models::pillowContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, roughness::pillow, metallic::pillow, ao::pillow, false);
 	drawObjectPBRTexture(models::pillowTwoContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, roughness::pillow, metallic::pillow, ao::pillow, false);
-	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, roughness::pillow, metallic::pillow, ao::pillow, false);
+	drawObjectPBRTexture(models::materaceContext, glm::mat4(), texture::pillow, normal::pillow, lightVP, spotlightVP, roughness::pillow, metallic::pillow, ao::pillow, true);
 	drawObjectPBRTexture(models::potContext, glm::mat4(),texture::clay, normal::clay, lightVP, spotlightVP, roughness::clay, metallic::clay, ao::clay, false);
 	drawObjectPBRTexture(models::windowContext, glm::mat4(), texture::window, normal::window, lightVP, spotlightVP, roughness::window, metallic::window, ao::window, false);
 	drawObjectPBRTexture(models::window2Context, glm::mat4(), texture::window, normal::window,  lightVP, spotlightVP, roughness::window, metallic::window, ao :: bed, false);
@@ -751,17 +751,17 @@ void init(GLFWwindow* window)
 	texture::window = Core::LoadTexture("./textures/window.jpg");
 
 	normal::ball = Core::LoadTexture("./textures/ballNormal.png");
-	normal::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
+	normal::door = Core::LoadTexture("./textures/windowNormal.png"); //TODO
 	normal::table = Core::LoadTexture("./textures/tableNormal.png");
-	normal::room = Core::LoadTexture("./textures/roomNormal.png");
-	normal::plane = Core::LoadTexture("./textures/planeNormal.png");
+	normal::room = Core::LoadTexture("./textures/roomNormal.jpg");
+	normal::plane = Core::LoadTexture("./textures/planeNormal.jpg");
 	normal::wardrobe = Core::LoadTexture("./textures/wardrobeNormal.png");
-	normal::bed = Core::LoadTexture("./textures/bedNormal.png");
+	normal::bed = Core::LoadTexture("./textures/bedNormal.jpg");
 	normal::sheet = Core::LoadTexture("./textures/sheetNormal.png");
-	normal::pillow = Core::LoadTexture("./textures/pillowNormal.png");
-	normal::chair = Core::LoadTexture("./textures/chairNormal.png");
+	normal::pillow = Core::LoadTexture("./textures/pillowNormal.jpg");
+	normal::chair = Core::LoadTexture("./textures/chairNormal.jpg");
 	normal::desk = Core::LoadTexture("./textures/deskNormal.png");
-	normal::clay = Core::LoadTexture("./textures/clayNormal.png");
+	normal::clay = Core::LoadTexture("./textures/clayNormal.jpg");
 	normal::marble = Core::LoadTexture("./textures/marbleNormal.png");
 	normal::window = Core::LoadTexture("./textures/windowNormal.png");
 	normal::def = Core::LoadTexture("./textures/default.png");
