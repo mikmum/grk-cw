@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+j:\Downloads\grkOdp\grk\dependencies\glfw-3.3.8.bin.WIN32\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
+Box.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  grk-cw2.vcxproj -> j:\Downloads\grkOdp\grk\Debug\grk-cw2.exe

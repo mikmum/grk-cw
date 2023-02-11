@@ -1,0 +1,14 @@
+﻿  Box.cpp
+  Camera.cpp
+  main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+J:\Downloads\grkOdp\grk\dependencies\glfw-3.3.8.bin.WIN32\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
+J:\Downloads\grkOdp\grk\cw 4\src\ex_4_1.hpp(92,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+J:\Downloads\grkOdp\grk\cw 4\src\ex_4_1.hpp(137,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Render_Utils.cpp
+  Shader_Loader.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 407 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  grk-cw4.vcxproj -> J:\Downloads\grkOdp\grk\Release\grk-cw4.exe

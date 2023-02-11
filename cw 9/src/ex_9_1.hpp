@@ -37,6 +37,7 @@ namespace texture {
 	GLuint clay;
 	GLuint marble;
 	GLuint window;
+	GLuint spaceship;
 }
 namespace normal {
 	GLuint ball;
@@ -54,6 +55,7 @@ namespace normal {
 	GLuint marble;
 	GLuint window;
 	GLuint def;
+	GLuint spaceship;
 }
 
 namespace metallic {
@@ -72,6 +74,7 @@ namespace metallic {
 	GLuint marble;
 	GLuint window;
 	GLuint def;
+	GLuint spaceship;
 }
 
 namespace roughness {
@@ -90,6 +93,7 @@ namespace roughness {
 	GLuint marble;
 	GLuint window;
 	GLuint def;
+	GLuint spaceship;
 }
 
 namespace ao {
@@ -108,6 +112,7 @@ namespace ao {
 	GLuint marble;
 	GLuint window;
 	GLuint def;
+	GLuint spaceship;
 }
 
 std::vector<std::string> faces =
@@ -613,7 +618,8 @@ void renderScene(GLFWwindow* window)
 	drawObjectPBRTexture(models::windowContext, glm::mat4(), texture::window, normal::window, lightVP, spotlightVP, roughness::window, metallic::window, ao::window, false);
 	drawObjectPBRTexture(models::window2Context, glm::mat4(), texture::window, normal::window,  lightVP, spotlightVP, roughness::window, metallic::window, ao :: bed, false);
 
-	glUseProgram(program);
+
+	//drawObjectPBRTexture(models::spaceshipContext, glm::mat4(), texture::spaceship, normal::spaceship,  lightVP, spotlightVP, roughness::spaceship, metallic::spaceship, ao :: spaceship, false);
 	glm::vec3 spaceshipSide = glm::normalize(glm::cross(spaceshipDir, glm::vec3(0.f, 1.f, 0.f)));
 	glm::vec3 spaceshipUp = glm::normalize(glm::cross(spaceshipSide, spaceshipDir));
 	specshipCameraRotrationMatrix = glm::mat4({
@@ -622,17 +628,31 @@ void renderScene(GLFWwindow* window)
 		-spaceshipDir.x,-spaceshipDir.y,-spaceshipDir.z,0,
 		0.,0.,0.,1.,
 		});
+	drawObjectPBRTexture(models::spaceshipContext,
+		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()) * glm::scale(glm::vec3(1.f)),
+		texture::spaceship,
+		normal::spaceship,
+		lightVP,
+		spotlightVP,
+		roughness::spaceship,
+		metallic::spaceship,
+		ao::spaceship,
+		false
+		);
+
+	glUseProgram(program);
 
 
 	//drawObjectColor(shipContext,
 	//	glm::translate(cameraPos + 1.5 * cameraDir + cameraUp * -0.5f) * inveseCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()),
 	//	glm::vec3(0.3, 0.3, 0.5)
 	//	);
-	drawObjectPBR(shipContext,
-		glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()) * glm::scale(glm::vec3(0.03f)),
-		glm::vec3(0.3, 0.3, 0.5),
-		lightVP, spotlightVP, 0.2,1.0
-	);
+
+	//drawObjectPBR(models::spaceshipContext,
+	//	glm::translate(spaceshipPos) * specshipCameraRotrationMatrix * glm::eulerAngleY(glm::pi<float>()) * glm::scale(glm::vec3(0.03f)),
+	//	glm::vec3(0.3, 0.3, 0.5),
+	//	lightVP, spotlightVP, 0.2,1.0
+	//);
 
 	spotlightPos = spaceshipPos + 0.2 * spaceshipDir;
 	spotlightConeDir = spaceshipDir;
@@ -722,14 +742,15 @@ void init(GLFWwindow* window)
 	loadModelToContext("./models/obiekty/pillow/pillowTwo.obj", models::pillowTwoContext);
 	loadModelToContext("./models/obiekty/switch/switch.obj", models::switchContext);
 	loadModelToContext("./models/obiekty/sheet/sheet.obj", models::sheetContext);
+	loadModelToContext("./models/obiekty/spaceship/small_spaceship.obj", models::spaceshipContext);
 
 	loadModelToContext("./models/sphere.obj", sphereContext);
-	loadModelToContext("./models/spaceship.obj", shipContext);
+	//loadModelToContext("./models/spaceship.obj", shipContext);
 	//loadModelToContext("./models/drawer.obj", models::drawerContext);
 	loadModelToContext("./models/marbleBust.obj", models::marbleBustContext);
 	loadModelToContext("./models/materace.obj", models::materaceContext);
 	//loadModelToContext("./models/pencils.obj", models::pencilsContext);
-	loadModelToContext("./models/spaceship.obj", models::spaceshipContext);
+	//loadModelToContext("./models/spaceship.obj", models::spaceshipContext);
 	loadModelToContext("./models/sphere.obj", models::sphereContext);
 	loadModelToContext("./models/test.obj", models::testContext);
 	loadModelToContext("./models/cube.obj", models::cubeContext);
@@ -749,6 +770,7 @@ void init(GLFWwindow* window)
 	texture::clay = Core::LoadTexture("./textures/clay.jpg");
 	texture::marble = Core::LoadTexture("./textures/marble.jpg");
 	texture::window = Core::LoadTexture("./textures/window.jpg");
+	texture::spaceship = Core::LoadTexture("./textures/spaceshipColor.jpg");
 
 	normal::ball = Core::LoadTexture("./textures/ballNormal.png");
 	normal::door = Core::LoadTexture("./textures/windowNormal.png"); //TODO
@@ -765,6 +787,7 @@ void init(GLFWwindow* window)
 	normal::marble = Core::LoadTexture("./textures/marbleNormal.png");
 	normal::window = Core::LoadTexture("./textures/windowNormal.png");
 	normal::def = Core::LoadTexture("./textures/default.png");
+	normal::spaceship = Core::LoadTexture("./textures/spaceshipNormal.png");
 
 	metallic::ball = Core::LoadTexture("./textures/ballMetallic.png");
 	metallic::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -780,6 +803,7 @@ void init(GLFWwindow* window)
 	metallic::clay = Core::LoadTexture("./textures/clayMetallic.jpg"); //TODO
 	metallic::marble = Core::LoadTexture("./textures/marbleMetallic.png"); //TODO
 	metallic::window = Core::LoadTexture("./textures/windowMetallic.png"); //TODO
+	//metallic::spaceship = Core::LoadTexture("./textures/spaceshipMetallic.jpg");
 
 	roughness::ball = Core::LoadTexture("./textures/ballRoughness.jpg");
 	roughness::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -795,6 +819,7 @@ void init(GLFWwindow* window)
 	roughness::clay = Core::LoadTexture("./textures/clayRoughness.jpg");
 	roughness::marble = Core::LoadTexture("./textures/marbleRoughness.jpg");
 	roughness::window = Core::LoadTexture("./textures/windowRoughness.jpg");
+	roughness::spaceship = Core::LoadTexture("./textures/spaceshipRoughness.jpg");
 
 	ao::ball = Core::LoadTexture("./textures/ballAo.jpg");
 	ao::door = Core::LoadTexture("./models/obiekty/door/door.jpg"); //TODO
@@ -810,6 +835,7 @@ void init(GLFWwindow* window)
 	ao::clay = Core::LoadTexture("./textures/clayAo.jpg");
 	ao::marble = Core::LoadTexture("./textures/marbleAo.jpg");
 	ao::window = Core::LoadTexture("./textures/windowAo.jpg");
+	//ao::spaceship = Core::LoadTexture("./textures/spaceshipAo.jpg");
 
 	initDepthMap();
 	initDepthMapSpotlight();

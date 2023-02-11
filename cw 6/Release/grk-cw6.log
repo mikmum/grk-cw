@@ -1,0 +1,16 @@
+﻿  main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+j:\Downloads\grkOdp\grk\dependencies\glfw-3.3.8.bin.WIN32\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(69,14): warning C4305: 'initializing': truncation from 'double' to 'float'
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(86,15): warning C4101: 'textureID': unreferenced local variable
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(115,38): warning C4305: '=': truncation from 'double' to 'float'
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(139,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(292,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(450,9): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+j:\Downloads\grkOdp\grk\cw 6\src\ex_6_1.hpp(452,9): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  15 of 562 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  grk-cw6.vcxproj -> j:\Downloads\grkOdp\grk\Release\grk-cw6.exe
