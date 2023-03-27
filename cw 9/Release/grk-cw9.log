@@ -1,0 +1,61 @@
+﻿  main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+J:\Studia\Grafika_projekt\grkOdp\grk\dependencies\glfw-3.3.8.bin.WIN32\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(202,30): warning C4305: 'initializing': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(219,38): warning C4305: '=': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(283,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(368,61): warning C4244: 'argument': conversion from 'GLuint' to 'GLfloat', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(369,60): warning C4244: 'argument': conversion from 'GLuint' to 'GLfloat', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(423,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(435,98): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(438,59): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(483,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(495,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(499,23): warning C4305: 'initializing': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(511,102): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(514,59): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(557,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(567,108): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(582,87): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(582,248): warning C4305: 'argument': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(585,59): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(586,59): warning C4305: 'argument': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(694,15): warning C4101: 'textureID': unreferenced local variable
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(877,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(879,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(887,22): warning C4305: '-=': truncation from 'double' to 'float'
+J:\Studia\Grafika_projekt\grkOdp\grk\cw 9\src\ex_9_1.hpp(889,22): warning C4305: '+=': truncation from 'double' to 'float'
+  Generating code
+  0 of 608 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  grk-cw9.vcxproj -> J:\Studia\Grafika_projekt\grkOdp\grk\Release\grk-cw9.exe
